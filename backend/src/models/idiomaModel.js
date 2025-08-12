@@ -1,4 +1,5 @@
-const db = require("../db/index.js");
+const db = require('../mock/idiomaMock.js');
+//const db = require("../db/index.js");
 
 //Obtener todas los idiomas
 const getIdiomas = async () => {

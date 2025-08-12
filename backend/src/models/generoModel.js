@@ -1,4 +1,5 @@
-const db = require("../db/index.js");
+const db = require('../mock/generoMock.js');
+//const db = require("../db/index.js");
 
 //Obtener todas los genero
 const getGenero = async () => {

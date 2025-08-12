@@ -1,4 +1,5 @@
-const db = require("../db/index.js");
+const db = require('../mock/cancionMock.js');
+//const db = require("../db/index.js");
 
 //Obtener todas las canciones
 const getCanciones = async () => {

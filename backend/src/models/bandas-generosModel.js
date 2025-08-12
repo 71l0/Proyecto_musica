@@ -1,4 +1,5 @@
-const db = require('../db/index.js');
+const db = require('../mock/bandasGenerosMock.js'); 
+//const db = require('../db/index.js');
 
 // Asignar un genero a banda
 const agregarGeneroABanda = async (id_genero, id_banda) => {

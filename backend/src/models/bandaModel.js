@@ -1,4 +1,5 @@
-const db = require("../db/index.js");
+const db = require("../mock/bandaMock.js");
+//const db = require("../db/index.js");
 
 //Obtener todas las bandas
 const getBandas = async () => {

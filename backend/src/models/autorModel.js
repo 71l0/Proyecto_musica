@@ -1,4 +1,5 @@
-const db = require("../db/index.js");
+const db = require(".../mock/autoresMock.js");
+//const db = require("../db/index.js");
 
 //Obtener todas los autores
 const getAutores = async () => {
