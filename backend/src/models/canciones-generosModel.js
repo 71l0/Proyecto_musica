@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../db/index.js');
 
 // Relacionar un género con una canción
 const agregarGeneroACancion = async (id_cancion, id_genero) => {

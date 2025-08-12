@@ -18,15 +18,15 @@ const bandasGenerosRoutes = require('./routes/bandas-generosRoutes');
 const bandasAutoresRoutes = require('./routes/bandas-autoresRoutes');
 
 //Usar rutas
-app.use('/api/canciones', cancionRoutes);
-app.use('/api/autores', autorRoutes);
-app.use('/api/generos', generoRoutes);
-app.use('/api/idiomas', idiomaRoutes);
-app.use('/api/bandas', bandaRoutes);
-app.use('/api/canciones-autores', cancionesAutoresRoutes);
-app.use('/api/canciones-generos', cancionesGenerosRoutes);
-app.use('/api/autores-generos', autoresGenerosRoutes);
-app.use('/api/bandas-generos', bandasGenerosRoutes);
-app.use('/api/bandas-autores', bandasAutoresRoutes);
+app.use('/canciones', cancionRoutes);
+app.use('/autores', autorRoutes);
+app.use('/generos', generoRoutes);
+app.use('/idiomas', idiomaRoutes);
+app.use('/bandas', bandaRoutes);
+app.use('/canciones-autores', cancionesAutoresRoutes);
+app.use('/canciones-generos', cancionesGenerosRoutes);
+app.use('/autores-generos', autoresGenerosRoutes);
+app.use('/bandas-generos', bandasGenerosRoutes);
+app.use('/bandas-autores', bandasAutoresRoutes);
 
 module.exports = app;

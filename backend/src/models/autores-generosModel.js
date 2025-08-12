@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../db/index.js');
 
 // Asignar un genero a autor
 const agregarAutorGeneros = async (id_genero, id_autor) => {

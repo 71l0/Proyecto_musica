@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../db/index.js');
 
 // Asignar un autor a banda
 const agregarAutorABanda = async (id_autor, id_banda) => {

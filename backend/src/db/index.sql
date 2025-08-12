@@ -44,7 +44,7 @@ CREATE TABLE cancion (
     id SERIAL PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
     id_idioma INT REFERENCES idioma(id) ON DELETE SET NULL,
-    id_banda INT REFERENCES banda(id) ON DELETE SET NULL
+    id_banda INT REFERENCES banda(id) ON DELETE SET NULL,
 )
 
 CREATE TABLE canciones_autores (
