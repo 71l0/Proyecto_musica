@@ -3,41 +3,38 @@ const db = require("../mock/bandaMock.js");
 
 //Obtener todas las bandas
 const getBandas = async () => {
-    const result = await db.query('SELECT * FROM banda');
-    return result.rows;
+    return db;
 }
 
 //Obtener banda por id
 const getBandaPorId = async () => {
-    const result = await db.query('SELECT * FROM banda WHERE id = $1', [id]);
-    return result.rows[0];
+    return db.find(banda => banda.id === Number(id));
 }
 
 //Crear banda
-const crearBanda = async ({ nombre_completo, fecha_debut, descripcion }) => {
-    const result = await db.query(
-        `INSERT INTO banda (nombre_completo, fecha_debut, descripcion)
-        VALUES ($1, $2, $3) RETURNING *`,
-        [nombre_completo, fecha_debut, descripcion]
-    );
-    return result.rows[0];
+const crearBanda = async ({ nombre, fecha_debut, descripcion }) => {
+    const nueva = {
+          id: db.length ? Math.max(...db.map(c => c.id)) + 1 : 1,
+          nombre,
+          fecha_debut,
+          descripcion
+        };
+        db.push(nueva);
+        return nueva;
 }
 
 //Editar banda
-const editarBanda = async (id, { nombre_completo, fecha_debut, descripcion }) => {
-  const result = await db.query(
-    `UPDATE banda
-     SET nombre_completo = $1, fecha_debut = $2, descripcion = $3
-     WHERE id = $4
-     RETURNING *`,
-    [nombre_completo, fecha_debut, descripcion, id]
-  );
-  return result.rows[0];
+const editarBanda = async (id, { nombre, fecha_debut, descripcion }) => {
+  const idx = db.findIndex(c => c.id === Number(id));
+    if (idx === -1) return null;
+    db[idx] = { ...db[idx], nombre, fecha_debut, descripcion };
+    return db[idx];
 };
 
 //Eliminar banda
 const eliminarBanda = async (id) => {
-  await db.query('DELETE FROM banda WHERE id = $1', [id]);
+   const idx = db.findIndex(c => c.id === Number(id));
+   if (idx === -1) db.splice(idx, 1);
 };
 
 module.exports = {

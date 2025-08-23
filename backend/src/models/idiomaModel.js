@@ -3,41 +3,36 @@ const db = require('../mock/idiomaMock.js');
 
 //Obtener todas los idiomas
 const getIdiomas = async () => {
-    const result = await db.query('SELECT * FROM idioma');
-    return result.rows;
+    return db;
 }
 
 //Obtener idioma por id
 const getIdiomaPorId = async () => {
-    const result = await db.query('SELECT * FROM idioma WHERE id = $1', [id]);
-    return result.rows[0];
+    return db.find(idioma => idioma.id === Number(id));
 }
 
 //Crear idioma
 const crearIdioma = async ({ nombre }) => {
-    const result = await db.query(
-        `INSERT INTO cancion (nombre)
-        VALUES ($1) RETURNING *`,
-        [nombre]
-    );
-    return result.rows[0];
+    const nueva = {
+          id: db.length ? Math.max(...db.map(c => c.id)) + 1 : 1,
+          nombre
+        };
+        db.push(nueva);
+        return nueva;
 }
 
 //Editar idioma
 const editarIdioma = async (id, { nombre }) => {
-  const result = await db.query(
-    `UPDATE idioma
-     SET nombre = $1
-     WHERE id = $2
-     RETURNING *`,
-    [nombre, id]
-  );
-  return result.rows[0];
+  const idx = db.findIndex(c => c.id === Number(id));
+    if (idx === -1) return null;
+    db[idx] = { ...db[idx], nombre };
+    return db[idx];
 };
 
 //Eliminar idioma
 const eliminarIdioma = async (id) => {
-  await db.query('DELETE FROM idioma WHERE id = $1', [id]);
+  const idx = db.findIndex(c => c.id === Number(id));
+  if (idx === -1) db.splice(idx, 1);
 };
 
 module.exports = {
