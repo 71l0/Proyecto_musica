@@ -1,44 +1,33 @@
-const db = require("../mock/bandaMock.js");
-//const db = require("../db/index.js");
+//const db = require("../mock/bandaMock.js");
+const db = require("../db/knex.js");
 
-//Obtener todas las bandas
-const getBandas = async () => {
-    return db;
-}
+//Obtener todas las banda
+const getBanda = async () => db('banda').select();
 
 //Obtener banda por id
-const getBandaPorId = async () => {
-    return db.find(banda => banda.id === Number(id));
-}
-
+const getBandaPorId = async (id) => db('banda').where({ id }).first();
 //Crear banda
 const crearBanda = async ({ nombre, fecha_debut, descripcion }) => {
-    const nueva = {
-          id: db.length ? Math.max(...db.map(c => c.id)) + 1 : 1,
-          nombre,
-          fecha_debut,
-          descripcion
-        };
-        db.push(nueva);
-        return nueva;
+    const [nueva] = await db('banda')
+        .insert({ nombre, fecha_debut, descripcion })
+        .returning('*');
+      return nueva;
 }
 
 //Editar banda
 const editarBanda = async (id, { nombre, fecha_debut, descripcion }) => {
-  const idx = db.findIndex(c => c.id === Number(id));
-    if (idx === -1) return null;
-    db[idx] = { ...db[idx], nombre, fecha_debut, descripcion };
-    return db[idx];
+  const [editada] = await db('banda')
+      .where({ id })
+      .update({ nombre, fecha_debut, descripcion })
+      .returning('*');
+    return editada;  
 };
 
 //Eliminar banda
-const eliminarBanda = async (id) => {
-   const idx = db.findIndex(c => c.id === Number(id));
-   if (idx === -1) db.splice(idx, 1);
-};
+const eliminarBanda = async (id) => db('banda').where({ id }).del();
 
 module.exports = {
-  getBandas,
+  getBanda,
   getBandaPorId,
   crearBanda,
   editarBanda,

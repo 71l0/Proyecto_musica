@@ -18,11 +18,11 @@ const bandasGenerosRoutes = require('./routes/bandas-generosRoutes');
 const bandasAutoresRoutes = require('./routes/bandas-autoresRoutes');
 
 //Usar rutas
-app.use('/canciones', cancionRoutes);
+app.use('/cancion', cancionRoutes);
 app.use('/autores', autorRoutes);
 app.use('/generos', generoRoutes);
-app.use('/idiomas', idiomaRoutes);
-app.use('/bandas', bandaRoutes);
+app.use('/idioma', idiomaRoutes);
+app.use('/banda', bandaRoutes);
 app.use('/canciones-autores', cancionesAutoresRoutes);
 app.use('/canciones-generos', cancionesGenerosRoutes);
 app.use('/autores-generos', autoresGenerosRoutes);

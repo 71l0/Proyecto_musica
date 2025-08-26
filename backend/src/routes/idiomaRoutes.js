@@ -4,7 +4,7 @@ const idiomaModel = require('../models/idiomaModel');
 
 router.get('/', async (req, res) => {
     try {
-        const idiomas = await idiomaModel.getIdiomas();
+        const idiomas = await idiomaModel.getIdioma();
         res.json(idiomas);
     } catch (error) {
         res.status(500).json({ error: "Error al obtener idiomas" });
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const idioma = await idiomaModel.getidiomaPorId(req.params.id);
+        const idioma = await idiomaModel.getIdiomaPorId(req.params.id);
         if (!idioma) {
             return res.status(404).json({ error: "Idioma no encontrado" });
         }

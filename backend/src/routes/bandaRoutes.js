@@ -4,7 +4,7 @@ const bandaModel = require('../models/bandaModel');
 
 router.get('/', async (req, res) => {
     try {
-        const banda = await bandaModel.getBandas();
+        const banda = await bandaModel.getBanda();
         res.json(banda);
     } catch (error) {
         res.status(500).json({ error: "Error al obtener las bandas" });

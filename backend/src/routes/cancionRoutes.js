@@ -4,7 +4,7 @@ const cancionModel = require('../models/cancionModel');
 
 router.get('/', async (req, res) => {
     try {
-        const canciones = await cancionModel.getCanciones();
+        const canciones = await cancionModel.getCancion();
         res.json(canciones);
     } catch (error) {
         res.status(500).json({ error: "Error al obtener canciones" });

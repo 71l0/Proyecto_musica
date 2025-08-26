@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TextInput, StyleSheet, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { ThemedView } from '@/components/ThemedView';
-
-const API_URL = 'http://192.168.0.47:4000/canciones'; 
+import { API_URL } from '../constants/api';
 
 interface Cancion {
   id: number;
   titulo: string;
-  id_idioma: number;
-  id_banda: number;
+  idioma_id: number;
+  banda_id: number;
 }
 
 interface ModalConfig {
@@ -38,6 +36,9 @@ export default function CancionesApp() {
   const [editIdIdioma, setEditIdIdioma] = useState('');
   const [editIdBanda, setEditIdBanda] = useState('');
 
+  const listaIdiomas = Array.isArray(idiomas) ? idiomas : [];
+  const listaBandas = Array.isArray(bandas) ? bandas : [];
+
   const [modal, setModal] = useState<ModalConfig>({
     visible: false,
     title: '',
@@ -46,7 +47,7 @@ export default function CancionesApp() {
   const [modalAgregarVisible, setModalAgregarVisible] = useState(false);
 
   useEffect(() => {
-    fetch('http://192.168.0.47:4000/idiomas')
+    fetch(`${API_URL}/idioma`)
       .then(res => res.json())
       .then(data => setIdiomas(data))
       .catch(() => {
@@ -55,7 +56,7 @@ export default function CancionesApp() {
   }, []);
 
   useEffect(() => {
-    fetch('http://192.168.0.47:4000/bandas')
+    fetch(`${API_URL}/banda`)
       .then(res => res.json())
       .then(data => setBandas(data))
       .catch(() => {
@@ -74,7 +75,7 @@ export default function CancionesApp() {
   const cargarCanciones = async () => {
     setLoading(true);
     try {
-      const res = await fetch(API_URL);
+      const res = await fetch(`${API_URL}/cancion`);
       const data = await res.json();
       setCanciones(data);
     } catch {
@@ -97,13 +98,13 @@ export default function CancionesApp() {
     }
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${API_URL}/cancion`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           titulo,
-          id_idioma: Number(idIdioma),
-          id_banda: Number(idBanda),
+          idioma_id: Number(idIdioma),
+          banda_id: Number(idBanda),
         }),
       });
 
@@ -125,8 +126,8 @@ export default function CancionesApp() {
   const iniciarEdicion = (cancion: Cancion) => {
     setEditingId(cancion.id);
     setEditTitulo(cancion.titulo);
-    setEditIdIdioma(String(cancion.id_idioma));
-    setEditIdBanda(String(cancion.id_banda));
+    setEditIdIdioma(String(cancion.idioma_id));
+    setEditIdBanda(String(cancion.banda_id));
   };
 
   // Cancelar edición
@@ -145,13 +146,13 @@ export default function CancionesApp() {
     }
 
     try {
-      const res = await fetch(`${API_URL}/${editingId}`, {
+      const res = await fetch(`${API_URL}/cancion/${editingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           titulo: editTitulo,
-          id_idioma: Number(editIdIdioma),
-          id_banda: Number(editIdBanda),
+          idioma_id: Number(editIdIdioma),
+          banda_id: Number(editIdBanda),
         }),
       });
 
@@ -178,7 +179,7 @@ export default function CancionesApp() {
       cancelText: 'Cancelar',
       onConfirm: async () => {
         try {
-          const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+          const res = await fetch(`${API_URL}/cancion/${id}`, { method: 'DELETE' });
           if (res.ok || res.status === 204) {
             setCanciones(canciones.filter(c => c.id !== id));
           } else {
@@ -225,7 +226,7 @@ export default function CancionesApp() {
                     style={styles.input}
                   >
                     <Picker.Item label="Selecciona un idioma" value="" />
-                    {idiomas.map(idioma => (
+                    {listaIdiomas.map(idioma => (
                       <Picker.Item key={idioma.id} label={idioma.nombre} value={String(idioma.id)} />
                     ))}
                   </Picker>
@@ -235,7 +236,7 @@ export default function CancionesApp() {
                     style={styles.input}
                   >
                     <Picker.Item label="Selecciona una banda" value="" />
-                    {bandas.map(banda => (
+                    {listaBandas.map(banda => (
                       <Picker.Item key={banda.id} label={banda.nombre} value={String(banda.id)} />
                     ))}
                   </Picker>
@@ -259,10 +260,10 @@ export default function CancionesApp() {
                 <>
                   <Text style={styles.cancionTitulo}>{item.titulo}</Text>
                   <Text style={{ marginBottom: 5 }}>
-                    <strong>Idioma:</strong> {idiomas.find(i => i.id === item.id_idioma)?.nombre || item.id_idioma}
+                    <Text style={{ fontWeight: 'bold' }}>Idioma: </Text> <Text>{idiomas.find(i => i.id === item.idioma_id)?.nombre || item.idioma_id}</Text>
                   </Text>
                   <Text style={{ marginBottom: 5 }}>
-                    <strong>Banda:</strong> {bandas.find(b => b.id === item.id_banda)?.nombre || item.id_banda}
+                    <Text style={{ fontWeight: 'bold' }}>Banda:</Text> <Text>{bandas.find(b => b.id === item.banda_id)?.nombre || item.banda_id}</Text>
                   </Text>
                   <TouchableOpacity
                     style={styles.btnEditar}
@@ -337,8 +338,9 @@ export default function CancionesApp() {
               onValueChange={(itemValue) => setIdIdioma(itemValue)}
               style={styles.input}
             >
+              
               <Picker.Item label="Selecciona un idioma" value="" />
-              {idiomas.map(idioma => (
+              {listaIdiomas.map(idioma => (
                 <Picker.Item key={idioma.id} label={idioma.nombre} value={String(idioma.id)} />
               ))}
             </Picker>
@@ -349,7 +351,7 @@ export default function CancionesApp() {
               style={styles.input}
             >
               <Picker.Item label="Selecciona una banda" value="" />
-              {bandas.map(banda => (
+              {listaBandas.map(banda => (
                 <Picker.Item key={banda.id} label={banda.nombre} value={String(banda.id)} />
               ))}
             </Picker>

@@ -1,44 +1,34 @@
-const db = require('../mock/cancionMock.js');
-//const db = require("../db/index.js");
+//const db = require('../mock/cancionMock.js');
+const db = require("../db/knex.js");
 
-//Obtener todas las canciones
-const getCanciones = async () => {
-    return db; 
-}
+//Obtener todas las cancion
+const getCancion = async () => db('cancion').select();
 
 //Obtener cancion por id
-const getCancionPorId = async (id) => {
-    return db.find(cancion => cancion.id === Number(id));
-}
+const getCancionPorId = async (id) => db('cancion').where({ id }).first();
 
 //Crear cancion
-const crearCancion = async ({ titulo, id_idioma, id_banda }) => {
-    const nueva = {
-      id: db.length ? Math.max(...db.map(c => c.id)) + 1 : 1,
-      titulo,
-      id_idioma,
-      id_banda
-    };
-    db.push(nueva);
-    return nueva;
-}
+const crearCancion = async ({ titulo, idioma_id, banda_id }) => {
+    const [nueva] = await db('cancion')
+    .insert({ titulo, idioma_id, banda_id })
+    .returning('*');
+  return nueva;
+};
 
 //Editar cancion
-const editarCancion = async (id, { titulo, id_idioma, id_banda }) => {
-  const idx = db.findIndex(c => c.id === Number(id));
-  if (idx === -1) return null;
-  db[idx] = { ...db[idx], titulo, id_idioma, id_banda };
-  return db[idx];
+const editarCancion = async (id, { titulo, idioma_id, banda_id }) => {
+  const [editada] = await db('cancion')
+    .where({ id })
+    .update({ titulo, idioma_id, banda_id })
+    .returning('*');
+  return editada;
 };
 
 //Eliminar cancion
-const eliminarCancion = async (id) => {
- const idx = db.findIndex(c => c.id === Number(id));
- if (idx === -1) db.splice(idx, 1);
-};
+const eliminarCancion = async (id) => db('cancion').where({ id }).del();
 
 module.exports = {
-  getCanciones,
+  getCancion,
   getCancionPorId,
   crearCancion,
   editarCancion,
