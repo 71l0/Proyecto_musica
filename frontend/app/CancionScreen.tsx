@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TextInput, StyleSheet, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { API_URL } from '../constants/api';
+import { useRouter } from 'expo-router';
 
 interface Cancion {
   id: number;
@@ -21,6 +22,8 @@ interface ModalConfig {
 }
 
 export default function CancionesApp() {
+  const router = useRouter();
+
   const [canciones, setCanciones] = useState<Cancion[]>([]);
   const [idiomas, setIdiomas] = useState<{ id: number, nombre: string }[]>([]);
   const [bandas, setBandas] = useState<{ id: number, nombre: string }[]>([]);
@@ -204,6 +207,14 @@ export default function CancionesApp() {
       >
         <Text style={styles.btnText}>Agregar nueva cancion</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.btnAgregar} 
+        onPress={() => router.push('../BandasScreen')}
+      >
+        <Text style={styles.btnText}>Ver lista de Bandas</Text>
+      </TouchableOpacity>
+
 
       {loading ? (
         <ActivityIndicator size="large" />

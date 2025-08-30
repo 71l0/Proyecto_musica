@@ -18,6 +18,20 @@ export default function Layout() {
           contentStyle: { backgroundColor: '#212747' },
         }}
       />
+      <Stack.Screen
+        name="BandasScreen"
+        options={{
+          headerShown: true,
+          title: 'Bandas',
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: '#212747',
+          },
+          headerTintColor: '#fff',
+          contentStyle: { backgroundColor: '#212747' },
+        }}
+      />
+      <AppNavigator />
     </Stack>
   );
 }
