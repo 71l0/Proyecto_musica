@@ -31,7 +31,6 @@ export default function Layout() {
           contentStyle: { backgroundColor: '#212747' },
         }}
       />
-      <AppNavigator />
     </Stack>
   );
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TextInput, StyleSheet, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { API_URL } from '../constants/api';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface Banda {
   id: number;
@@ -182,7 +183,7 @@ export default function BandasApp() {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#212747ff', '#0d0f1f']} style={styles.container}>
       <Text style={styles.title}>Lista de Bandas</Text>
       
       <TouchableOpacity style={styles.btnAgregar} 
@@ -344,7 +345,7 @@ export default function BandasApp() {
         </View>
     </View>
     </Modal>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#ccc', marginBottom: 10, padding: 8, borderRadius: 4, backgroundColor: '#eee' },
 
   //lista de bandas
-  banda: { marginBottom: 15, marginRight: 10, backgroundColor: '#d3f7f7ff', padding: 10, borderRadius: 9 },
+  banda: { marginBottom: 15, marginRight: 10, backgroundColor: '#6dc7c7ff', padding: 10, borderRadius: 9, borderWidth: 1, borderColor: '#000000ff' },
   bandaTitulo: { fontWeight: 'bold', marginBottom: 5, fontSize: 18 },
 
   // Modal

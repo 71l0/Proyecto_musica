@@ -3,6 +3,7 @@ import { View, Text, FlatList, TextInput, StyleSheet, Modal, TouchableOpacity, A
 import { Picker } from '@react-native-picker/picker';
 import { API_URL } from '../constants/api';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface Cancion {
   id: number;
@@ -199,21 +200,23 @@ export default function CancionesApp() {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#212747ff', '#0d0f1f']} style={styles.container}>
       <Text style={styles.title}>Lista de Canciones</Text>
       
-      <TouchableOpacity style={styles.btnAgregar} 
-        onPress={() => {setModalAgregarVisible(true)}}
-      >
-        <Text style={styles.btnText}>Agregar nueva cancion</Text>
-      </TouchableOpacity>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
+        <TouchableOpacity style={[styles.btnAgregar, { flex: 1, marginRight: 5 }]} 
+          onPress={() => {setModalAgregarVisible(true)}}
+        >
+          <Text style={styles.btnText}>Agregar nueva cancion</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={styles.btnAgregar} 
-        onPress={() => router.push('../BandasScreen')}
-      >
-        <Text style={styles.btnText}>Ver lista de Bandas</Text>
-      </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.btnBanda, { flex: 1, marginLeft: 5 }]} 
+          onPress={() => router.push('../BandasScreen')}
+        >
+          <Text style={styles.btnText}>Ver lista de Bandas</Text>
+        </TouchableOpacity>
+      </View>
 
 
       {loading ? (
@@ -389,7 +392,7 @@ export default function CancionesApp() {
           </View>
         </View>
       </Modal>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -417,5 +420,6 @@ const styles = StyleSheet.create({
   btnConfirm: { backgroundColor: '#34C759', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8, flex: 1, alignItems: 'center', marginBottom: 5},
   btnText: { color: '#fff', fontWeight: 'bold', fontSize: 16},
   btnAgregar: { backgroundColor: '#006effff', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 20, alignItems: 'center', alignSelf: 'center', marginHorizontal: 5, marginBottom: 30},
+  btnBanda: { backgroundColor: '#058c81ff', paddingVertical: 10, paddingHorizontal: 30, borderRadius: 20, alignItems: 'center', alignSelf: 'center', marginHorizontal: 5, marginBottom: 30},
 });
 
