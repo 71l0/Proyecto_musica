@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TextInput, StyleSheet, Modal, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { API_URL } from '../constants/api';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -34,6 +33,10 @@ export default function BandasApp() {
   const [editNombre, setEditNombre] = useState('');
   const [editFechaDebut, setEditFechaDebut]= useState('');
   const [editDescripcion, setEditDescripcion] = useState('');
+
+  const [busquedaBanda, setBusquedaBanda] = useState('');
+
+  const [expandBanda, setExpandBanda] = useState<number[]>([]);
 
   const [modal, setModal] = useState<ModalConfig>({
     visible: false,
@@ -182,9 +185,35 @@ export default function BandasApp() {
     });
   };
 
+  //Filtrar bandas segun entrada de busqueda
+  const bandasFiltradas = banda.filter(banda => {
+    const query = busquedaBanda.toLowerCase();
+    return (
+      banda.nombre.toLowerCase().includes(query) ||
+      banda.fecha_debut.toString().includes(query) ||
+      banda.descripcion.toLowerCase().includes(query)
+    );
+  });
+
+  //Expandir y contraer descripcion de banda
+  const toggleExpand = (id: number) => {
+    if (expandBanda.includes(id)) {
+      setExpandBanda(expandBanda.filter(bandaId => bandaId !== id));
+    } else {
+      setExpandBanda([...expandBanda, id]);
+    }
+  }
+
   return (
     <LinearGradient colors={['#212747ff', '#0d0f1f']} style={styles.container}>
       <Text style={styles.title}>Lista de Bandas</Text>
+      
+      <TextInput
+        placeholder="Buscar banda..."
+        value={busquedaBanda}
+        onChangeText={setBusquedaBanda}
+        style={[styles.input, {borderRadius: 18, marginBottom: 20, backgroundColor: '#d6fff1ff', borderWidth: 2, borderColor: '#000000ff'}]}
+      />
       
       <TouchableOpacity style={styles.btnAgregar} 
         onPress={() => {setModalAgregarVisible(true)}}
@@ -196,7 +225,7 @@ export default function BandasApp() {
         <ActivityIndicator size="large" />
       ) : (
         <FlatList
-          data={banda}
+          data={bandasFiltradas}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.banda}>
@@ -214,9 +243,10 @@ export default function BandasApp() {
                     keyboardType="numeric"
                   />
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
                     value={editDescripcion}
                     onChangeText={setEditDescripcion}
+                    multiline
                   />
                   <TouchableOpacity
                     style={styles.btnConfirm}
@@ -241,8 +271,24 @@ export default function BandasApp() {
                     <Text style={{ fontWeight: 'bold' }}>Año de fundación: </Text> <Text>{item.fecha_debut}</Text>
                   </Text>
                   <Text style={{ marginBottom: 5 }}>
-                    <Text style={{ fontWeight: 'bold' }}>{item.descripcion}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>
+                      {expandBanda.includes(item.id)
+                        ? item.descripcion // Mostrar descripción completa
+                        : item.descripcion.length > 10
+                          ? item.descripcion.substring(0, 10) + '... ' // Mostrar resumen cortado con "..."
+                          : item.descripcion // Mostrar descripción completa si es corta
+                        }
+                    </Text>
                   </Text>
+                          
+                  {item.descripcion.length > 10 && (
+                    <TouchableOpacity onPress={() => toggleExpand(item.id)}>
+                      <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>
+                        {expandBanda.includes(item.id) ? 'Mostrar menos' : 'Mostrar más'}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+
                   <TouchableOpacity
                     style={styles.btnEditar}
                     onPress={() => iniciarEdicion(item)}
@@ -319,10 +365,11 @@ export default function BandasApp() {
                 keyboardType="numeric"
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
                 placeholder="Descripción"
                 value={descripcion}
                 onChangeText={setDescripcion}
+                multiline
             />
             <View style={styles.modalButtons}>
                 <TouchableOpacity

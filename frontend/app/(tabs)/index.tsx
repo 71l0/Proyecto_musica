@@ -19,15 +19,15 @@ export default function HomeScreen() {
   return (
     <LinearGradient colors={['#171b31', '#0d0f1f']} style={styles.container}>
       
-      <Animated.View style={{ opacity: fadeAnim}}>
+      <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
         <Image 
           source={require('@/images/logo.png')} 
-          style={{ width: 400, height: 400, marginBottom: -100, marginTop: -160 }} 
+          style={{ width: 500, height: 400, marginBottom: -40, marginTop: -100 }} 
           resizeMode="contain"
         />
 
-        <ThemedText type="title" style={styles.title}>Bienvenido a nuestra App</ThemedText>
-        <ThemedText style={styles.subtitle}>Tu biblioteca de música personalizada</ThemedText>
+        <ThemedText type="title" style={styles.title}>Bienvenido</ThemedText>
+        <ThemedText style={styles.subtitle}>Tu biblioteca de canciones personalizada</ThemedText>
       
         <Pressable
           style={({ pressed }) => [
@@ -36,7 +36,7 @@ export default function HomeScreen() {
           ]}
           onPress={() => router.push('/CancionScreen')}
         >
-          <Text style={styles.buttonText}>Ir a la lista de música</Text>
+          <Text style={styles.buttonText}>Ir a la lista de canciones</Text>
         </Pressable>
 
       </Animated.View>
@@ -54,20 +54,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#171b31ff',
   },
   title:{
-    fontSize: 36,
-    marginBottom: 10,
+    fontSize: 42,
+    marginBottom: 20,
     color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
   },
   subtitle:{
-    fontSize: 18,
-    marginBottom: 40,
+    fontSize: 20,
+    marginBottom: 60,
     color: '#bbb',
     textAlign: 'center',
   },
   button: {
-    marginTop: 20,
+    marginTop: 30,
+    alignItems: 'center',
     backgroundColor: '#1DB954',
     paddingVertical: 18,
     paddingHorizontal: 25,

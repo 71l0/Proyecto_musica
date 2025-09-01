@@ -43,6 +43,11 @@ export default function CancionesApp() {
   const listaIdiomas = Array.isArray(idiomas) ? idiomas : [];
   const listaBandas = Array.isArray(bandas) ? bandas : [];
 
+  const [busquedaCancion, setBusquedaCancion] = useState('');
+
+  const [busquedaBanda, setBusquedaBanda] = useState('');
+  const [busquedaEditBanda, setBusquedaEditBanda] = useState('');
+
   const [modal, setModal] = useState<ModalConfig>({
     visible: false,
     title: '',
@@ -199,10 +204,41 @@ export default function CancionesApp() {
     });
   };
 
+  //Buscador de canciones
+  const cancionesFiltradas = canciones.filter(cancion => {
+    const nombreBanda = bandas.find(b => b.id === cancion.banda_id)?.nombre.toLowerCase() || '';
+    const nombreIdioma = idiomas.find(i => i.id === cancion.idioma_id)?.nombre.toLowerCase() || '';
+    const query = busquedaCancion.toLowerCase();
+
+    return (
+      cancion.titulo.toLowerCase().includes(query) ||
+      nombreBanda.includes(query) ||
+      nombreIdioma.includes(query)
+    );
+  });
+
+
+  //Filtramos las bandas segun lo que se escriba para crear
+  const bandasFiltradas = listaBandas.filter(banda =>
+    banda.nombre.toLowerCase().includes(busquedaBanda.toLowerCase())
+  );
+
+  //Filtramos las bandas segun lo que se escriba para editar
+  const bandasEditFiltradas = listaBandas.filter(banda =>
+    banda.nombre.toLowerCase().includes(busquedaEditBanda.toLowerCase())
+  );
+
   return (
     <LinearGradient colors={['#212747ff', '#0d0f1f']} style={styles.container}>
       <Text style={styles.title}>Lista de Canciones</Text>
-      
+
+      <TextInput
+        placeholder="Buscar canción..."
+        value={busquedaCancion}
+        onChangeText={setBusquedaCancion}
+        style={[styles.input, {borderRadius: 18, marginBottom: 20, backgroundColor: '#d6fff1ff', borderWidth: 2, borderColor: '#000000ff'}]}
+      />
+
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
         <TouchableOpacity style={[styles.btnAgregar, { flex: 1, marginRight: 5 }]} 
           onPress={() => {setModalAgregarVisible(true)}}
@@ -223,7 +259,7 @@ export default function CancionesApp() {
         <ActivityIndicator size="large" />
       ) : (
         <FlatList
-          data={canciones}
+          data={cancionesFiltradas}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.cancion}>
@@ -244,16 +280,34 @@ export default function CancionesApp() {
                       <Picker.Item key={idioma.id} label={idioma.nombre} value={String(idioma.id)} />
                     ))}
                   </Picker>
-                  <Picker
-                    selectedValue={editIdBanda}
-                    onValueChange={(itemValue) => setEditIdBanda(itemValue)}
+                  
+                  <TextInput 
+                    placeholder='Buscar banda...'
+                    value={busquedaEditBanda}
+                    onChangeText={setBusquedaEditBanda}
                     style={styles.input}
-                  >
-                    <Picker.Item label="Selecciona una banda" value="" />
-                    {listaBandas.map(banda => (
-                      <Picker.Item key={banda.id} label={banda.nombre} value={String(banda.id)} />
-                    ))}
-                  </Picker>
+                  />
+
+                  <FlatList 
+                    data={bandasEditFiltradas}
+                    keyExtractor={(item) => item.id.toString()}
+                    style={{ maxHeight: 150, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 }}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={{
+                          padding: 10,
+                          backgroundColor: idBanda === String(item.id) ? '#444' : '#222'
+                        }}
+                        onPress={() => {
+                          setEditIdBanda(String(item.id));
+                          setEditIdBanda(item.nombre); // Mostramos la banda elegida en el input
+                        }}
+                      >
+                        <Text style={{ color: 'white' }}>{item.nombre}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+
                   <TouchableOpacity
                     style={styles.btnConfirm}
                     onPress={() => {
@@ -359,18 +413,34 @@ export default function CancionesApp() {
               ))}
             </Picker>
 
-            <Picker
-              selectedValue={idBanda}
-              onValueChange={(itemValue) => setIdBanda(itemValue)}
+            <TextInput 
+              placeholder='Buscar banda...'
+              value={busquedaBanda}
+              onChangeText={setBusquedaBanda}
               style={styles.input}
-            >
-              <Picker.Item label="Selecciona una banda" value="" />
-              {listaBandas.map(banda => (
-                <Picker.Item key={banda.id} label={banda.nombre} value={String(banda.id)} />
-              ))}
-            </Picker>
+            />
+            <FlatList 
+              data={bandasFiltradas}
+              keyExtractor={(item) => item.id.toString()}
+              style={{ maxHeight: 150, borderWidth: 1, borderColor: '#ccc', borderRadius: 5 }}
+                renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={{
+                    padding: 10,
+                    backgroundColor: idBanda === String(item.id) ? '#444' : '#222'
+                  }}
+                  onPress={() => {
+                    setIdBanda(String(item.id));
+                    setBusquedaBanda(item.nombre); // Mostramos la banda elegida en el input
+                  }}
+                >
+                  <Text style={{ color: 'white' }}>{item.nombre}</Text>
+                </TouchableOpacity>
+              )}
+            />
 
             <View style={styles.modalButtons}>
+            
             <TouchableOpacity
               style={styles.btnCancel}
               onPress={() => setModalAgregarVisible(false)}
