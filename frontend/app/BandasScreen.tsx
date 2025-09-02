@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 interface Banda {
   id: number;
   nombre: string;
-  fecha_debut: number;
+  fecha_debut: string;
   descripcion: string;
 }
 
@@ -61,7 +61,7 @@ export default function BandasApp() {
 
   const hideModal = () => setModal({ ...modal, visible: false });
 
-  // Cargar bandaes
+  // Cargar bandas
   const cargarBandas = async () => {
     setLoading(true);
     try {
@@ -80,20 +80,28 @@ export default function BandasApp() {
     cargarBandas();
   }, []);
 
-  // Agregar canción
+  // Agregar banda
   const agregarBanda = async () => {
     if (!nombre || !fecha_debut || !descripcion) {
       showModal({ title: 'Error', message: 'Completa todos los campos' });
       return;
     }
 
+    const anio = parseInt(fecha_debut, 10);
+    if (isNaN(anio)){
+      showModal({ title: 'Error', message: 'El año de fundación debe ser un número válido' });
+      return;
+    }
+    const fechaDebut = `${anio}-01-01`; 
+    console.log(fechaDebut);
+
     try {
       const res = await fetch(`${API_URL}/banda`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nombre,
-          fecha_debut: parseInt(fecha_debut, 10),
+          nombre: nombre,
+          fecha_debut: parseInt(fechaDebut, 10),
           descripcion,
         }),
       });
@@ -104,10 +112,12 @@ export default function BandasApp() {
         setNombre('');
         setFechaDebut('');
         setDescripcion('');
+        setModalAgregarVisible(false);
       } else {
         showModal({ title: 'Error', message: 'No se pudo agregar la banda' });
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
       showModal({ title: 'Error', message: 'Error al conectar con el servidor' });
     }
   };
@@ -116,7 +126,7 @@ export default function BandasApp() {
   const iniciarEdicion = (banda: Banda) => {
     setEditingId(banda.id);
     setEditNombre(banda.nombre);
-    setFechaDebut(String(banda.fecha_debut));
+    setEditFechaDebut(String(banda.fecha_debut));
     setEditDescripcion(String(banda.descripcion));
   };
 
@@ -135,13 +145,20 @@ export default function BandasApp() {
       return;
     }
 
+    const anio = parseInt(editFechaDebut, 10);
+    if (isNaN(anio)) {
+      showModal({ title: 'Error', message: 'El año de fundación debe ser un número válido' });
+      return;
+    }
+    const fechaDebut = `${anio}-01-01`;
+
     try {
       const res = await fetch(`${API_URL}/banda/${editingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombre: editNombre,
-          fecha_debut: parseInt(editFechaDebut, 10),
+          fecha_debut: parseInt(fechaDebut, 10),
           descripcion: editDescripcion,
         }),
       });
@@ -216,7 +233,12 @@ export default function BandasApp() {
       />
       
       <TouchableOpacity style={styles.btnAgregar} 
-        onPress={() => {setModalAgregarVisible(true)}}
+        onPress={() => {
+          setNombre('');
+          setFechaDebut('');
+          setDescripcion('');
+          setModalAgregarVisible(true)
+        }}
       >
         <Text style={styles.btnText}>Agregar nueva banda</Text>
       </TouchableOpacity>
@@ -268,22 +290,22 @@ export default function BandasApp() {
                 <>
                   <Text style={styles.bandaTitulo}>{item.nombre}</Text>
                   <Text style={{ marginBottom: 5 }}>
-                    <Text style={{ fontWeight: 'bold' }}>Año de fundación: </Text> <Text>{item.fecha_debut}</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Año de fundación: </Text> <Text style={{ fontSize: 16 }}>{item.fecha_debut}</Text>
                   </Text>
-                  <Text style={{ marginBottom: 5 }}>
-                    <Text style={{ fontWeight: 'bold' }}>
+                  <Text style={{ marginBottom: 10 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16}}>
                       {expandBanda.includes(item.id)
                         ? item.descripcion // Mostrar descripción completa
-                        : item.descripcion.length > 10
-                          ? item.descripcion.substring(0, 10) + '... ' // Mostrar resumen cortado con "..."
+                        : item.descripcion.length > 120
+                          ? item.descripcion.substring(0, 120) + '... ' // Mostrar resumen cortado con "..."
                           : item.descripcion // Mostrar descripción completa si es corta
                         }
                     </Text>
                   </Text>
                           
-                  {item.descripcion.length > 10 && (
+                  {item.descripcion.length > 120 && (
                     <TouchableOpacity onPress={() => toggleExpand(item.id)}>
-                      <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>
+                      <Text style={{ color: '#001933ff', fontWeight: 'bold', marginBottom: 15 }}>
                         {expandBanda.includes(item.id) ? 'Mostrar menos' : 'Mostrar más'}
                       </Text>
                     </TouchableOpacity>
@@ -374,7 +396,12 @@ export default function BandasApp() {
             <View style={styles.modalButtons}>
                 <TouchableOpacity
                 style={styles.btnCancel}
-                onPress={() => setModalAgregarVisible(false)}
+                onPress={() => {
+                  setNombre('');
+                  setFechaDebut('');
+                  setDescripcion('');
+                  setModalAgregarVisible(false)
+                }}
                 >
                 <Text style={styles.btnText}>Cancelar</Text>
                 </TouchableOpacity>
@@ -382,8 +409,8 @@ export default function BandasApp() {
                 <TouchableOpacity
                 style={styles.btnConfirm}
                 onPress={() => {
-                    agregarBanda();
-                    setModalAgregarVisible(false);
+                  agregarBanda();
+                  setModalAgregarVisible(false);
                 }}
                 >
                 <Text style={styles.btnText}>Agregar</Text>
@@ -399,14 +426,14 @@ export default function BandasApp() {
 const styles = StyleSheet.create({
   container: { padding: 20, flex: 1, marginTop: 30, backgroundColor: '#212747ff' },
   title: { fontSize: 30, fontWeight: 'bold', marginBottom: 30, color: '#dff5f5ff', textAlign: 'center' },
-  subtitle: { fontSize: 18, marginTop: 20, marginBottom: 10 },
+  subtitle: { fontSize: 18, marginTop: 20, marginBottom: 20 },
 
   //Entrada
   input: { borderWidth: 1, borderColor: '#ccc', marginBottom: 10, padding: 8, borderRadius: 4, backgroundColor: '#eee' },
 
   //lista de bandas
-  banda: { marginBottom: 15, marginRight: 10, backgroundColor: '#6dc7c7ff', padding: 10, borderRadius: 9, borderWidth: 1, borderColor: '#000000ff' },
-  bandaTitulo: { fontWeight: 'bold', marginBottom: 5, fontSize: 18 },
+  banda: { marginBottom: 15, marginRight: 10, backgroundColor: '#c8f0f0ff', padding: 10, borderRadius: 9, borderWidth: 1, borderColor: '#000000ff' },
+  bandaTitulo: { fontWeight: 'bold', marginBottom: 5, fontSize: 20 },
 
   // Modal
   modalOverlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },

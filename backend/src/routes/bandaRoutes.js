@@ -28,6 +28,7 @@ router.post('/', async (req, res) => {
     const nueva = await bandaModel.crearBanda(req.body);
     res.status(201).json(nueva);
   } catch (error) {
+    console.error('Error al crear banda:', error);
     res.status(500).json({ error: 'Error al crear banda' });
   }
 });

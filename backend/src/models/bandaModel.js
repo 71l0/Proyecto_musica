@@ -6,6 +6,7 @@ const getBanda = async () => db('banda').select();
 
 //Obtener banda por id
 const getBandaPorId = async (id) => db('banda').where({ id }).first();
+
 //Crear banda
 const crearBanda = async ({ nombre, fecha_debut, descripcion }) => {
     const [nueva] = await db('banda')

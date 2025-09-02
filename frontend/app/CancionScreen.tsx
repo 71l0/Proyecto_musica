@@ -123,6 +123,7 @@ export default function CancionesApp() {
         setTitulo('');
         setIdIdioma('');
         setIdBanda('');
+        setBusquedaBanda('');
       } else {
         showModal({ title: 'Error', message: 'No se pudo agregar la canción' });
       }
@@ -300,7 +301,7 @@ export default function CancionesApp() {
                         }}
                         onPress={() => {
                           setEditIdBanda(String(item.id));
-                          setEditIdBanda(item.nombre); // Mostramos la banda elegida en el input
+                          setBusquedaEditBanda(item.nombre); // Mostramos la banda elegida en el input
                         }}
                       >
                         <Text style={{ color: 'white' }}>{item.nombre}</Text>

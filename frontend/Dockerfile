@@ -9,7 +9,7 @@ RUN npm install
 # Copiar el resto del codigo
 COPY . .
 
-# Generar la build web (ajusta el comando según tu proyecto: expo export:web o npm run build)
+# Generar la build web
 RUN npm run web-build
 
 # Servir con Nginx
